@@ -36,6 +36,7 @@
     "@lerna/describe-ref": "file:../describe-ref",
     "minimatch": "^3.0.4",
     "npmlog": "^6.0.2",
+    "read-pkg-up": "^9.1.0",
     "slash": "^3.0.0"
   }
 }
