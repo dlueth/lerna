@@ -64,6 +64,10 @@ exports.builder = (yargs, composed) => {
       ].join("\n"),
       type: "array",
     },
+    "ignore-nested": {
+      describe: "Ignore changes in nested (sub-) packages when detecting changed packages.",
+      type: "boolean",
+    },
     "ignore-scripts": {
       describe: "Disable all lifecycle scripts",
       type: "boolean",
