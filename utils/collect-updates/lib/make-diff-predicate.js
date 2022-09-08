@@ -4,6 +4,7 @@ const childProcess = require("@lerna/child-process");
 const log = require("npmlog");
 const minimatch = require("minimatch");
 const path = require("path");
+const pkgUp = require("read-pkg-up");
 const slash = require("slash");
 
 module.exports.makeDiffPredicate = makeDiffPredicate;
@@ -46,6 +47,16 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
         changedFiles = changedFiles.filter(ignored);
       }
     }
+    
+    changedFiles = changedFiles.filter((file) => {
+        const { pkg: { name } } = pkgUp.sync({ cwd: path.dirname(file) })
+
+        if (name && name !== node.name) {
+            log.verbose("ignoring diff for", node.name, { file, name });
+        }
+
+        return !name || name === node.name;
+    });
 
     if (changedFiles.length) {
       log.verbose("filtered diff", changedFiles);
