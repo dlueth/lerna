@@ -49,7 +49,7 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
     }
     
     changedFiles = changedFiles.filter((file) => {
-        const { pkg: { name } } = pkgUp.sync({ cwd: path.dirname(file) })
+        const { packageJson: { name } } = pkgUp.sync({ cwd: path.dirname(file) });
 
         if (name && name !== node.name) {
             log.verbose("ignoring diff for", node.name, { file, name });
