@@ -20,8 +20,8 @@
     },
     "useNx": {
       "type": "boolean",
-      "description": "When true, Lerna will delegate the implementation details of `lerna run` to the Nx task runner, instead of p-map or p-queue.",
-      "default": false
+      "description": "By setting `useNx` to `false` you can use the legacy task running implementations in `lerna` (`p-map` and `p-queue`) instead of using the default modern task runner implementation powered by [Nx](https://nx.dev).",
+      "default": true
     },
     "command": {
       "type": "object",
@@ -911,6 +911,9 @@
             "skipNxCache": {
               "$ref": "#/$defs/commandOptions/run/skipNxCache"
             },
+            "loadEnvFiles": {
+              "$ref": "#/$defs/commandOptions/run/loadEnvFiles"
+            },
 
             "npmClient": {
               "$ref": "#/$defs/globals/npmClient"
@@ -1644,6 +1647,10 @@
         "skipNxCache": {
           "type": "boolean",
           "description": "During `lerna run`, when true, skip the nx cache."
+        },
+        "loadEnvFiles": {
+          "type": "boolean",
+          "description": "During `lerna run`, when false, skip loading of environment variables from .env files."
         }
       },
       "version": {
