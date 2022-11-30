@@ -68,7 +68,7 @@ const config = {
       announcementBar: {
         id: "lerna-talks",
         content:
-          'Do not miss Lerna talks at <a target="_blank" style="font-weight: bolder" rel="noopener noreferrer" href="https://nx.dev/conf?utm_source=lerna.js.org">NxConf on October 17!</a>',
+          'State of JS survey: <a target="_blank" style="font-weight: bolder" rel="noopener noreferrer" href="https://stateofjs.com/en-us/">Give Nx & Lerna a thumbs up</a> <span aria-hidden="true">&rarr;</span>',
         backgroundColor: "#9333EA",
         textColor: "#FFFFFF",
         isCloseable: false,
@@ -113,7 +113,7 @@ const config = {
             position: "left",
             label: "Get Started",
           },
-          // { to: "/blog", label: "Blog", position: "left" },
+          { to: "/upgrade", label: "Upgrade", position: "left" },
           // {
           //   href: "https://nx.dev",
           //   className: "header-nxdev-link",
@@ -159,7 +159,7 @@ const config = {
               },
               {
                 label: "Youtube Channel",
-                href: "https://youtube.com/nrwl_io?utm_source=lerna.js.org",
+                href: "https://youtube.com/@nxdevtools?utm_source=lerna.js.org",
               },
             ],
           },
@@ -201,8 +201,7 @@ const config = {
               },
               {
                 label: "Help Us",
-                href:
-                  "https://github.com/lerna/lerna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Acommunity",
+                href: "https://github.com/lerna/lerna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Acommunity",
               },
             ],
           },

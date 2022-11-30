@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/lerna/lerna/compare/v6.0.3...v6.1.0) (2022-11-29)
+
+**Note:** Version bump only for package @lerna/package
+
+## [6.0.3](https://github.com/lerna/lerna/compare/v6.0.2...v6.0.3) (2022-11-07)
+
+**Note:** Version bump only for package @lerna/package
+
+## [6.0.2](https://github.com/lerna/lerna/compare/v6.0.1...v6.0.2) (2022-11-02)
+
+### Bug Fixes
+
+- **publish:** remove workspace prefix on publish ([#3397](https://github.com/lerna/lerna/issues/3397)) ([1f0e546](https://github.com/lerna/lerna/commit/1f0e54697ef4526251684478c9dcdd6447e3123c))
+
 ## [6.0.1](https://github.com/lerna/lerna/compare/v6.0.0...v6.0.1) (2022-10-14)
 
 **Note:** Version bump only for package @lerna/package

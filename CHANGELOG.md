@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/lerna/lerna/compare/v6.0.3...v6.1.0) (2022-11-29)
+
+### Bug Fixes
+
+- **run:** detect target configuration in package.json files ([#3432](https://github.com/lerna/lerna/issues/3432)) ([798aae1](https://github.com/lerna/lerna/commit/798aae14656c9fbbde62bd941fe3a11450112f3b))
+
+### Features
+
+- **version:** bump prerelease versions from conventional commits ([#3362](https://github.com/lerna/lerna/issues/3362)) ([2288b3a](https://github.com/lerna/lerna/commit/2288b3aca4753b3943ea845ef8785321e5f77610))
+
+## [6.0.3](https://github.com/lerna/lerna/compare/v6.0.2...v6.0.3) (2022-11-07)
+
+### Bug Fixes
+
+- **publish:** support inconsistent workspace prefix usage ([#3413](https://github.com/lerna/lerna/issues/3413)) ([da2274b](https://github.com/lerna/lerna/commit/da2274ba68f75082e3d0399241c27038f99da40a))
+- **version:** only apply prettier if it was explicitly installed ([#3406](https://github.com/lerna/lerna/issues/3406)) ([0161bbe](https://github.com/lerna/lerna/commit/0161bbe187e7d97231e7d36f30371ae0f479da57))
+
+## [6.0.2](https://github.com/lerna/lerna/compare/v6.0.1...v6.0.2) (2022-11-02)
+
+### Bug Fixes
+
+- **publish:** remove workspace prefix on publish ([#3397](https://github.com/lerna/lerna/issues/3397)) ([1f0e546](https://github.com/lerna/lerna/commit/1f0e54697ef4526251684478c9dcdd6447e3123c))
+
 ## [6.0.1](https://github.com/lerna/lerna/compare/v6.0.0...v6.0.1) (2022-10-14)
 
 ### Bug Fixes
@@ -41,7 +64,7 @@ https://lerna.js.org/docs/lerna6-obsolete-options
 
 When configuration changes over time as new versions of a tool are published it can be tricky to keep up with the changes and sometimes it's possible to miss out on optimizations as a result.
 
-When you run the new command `lerna repair`, lerna will execute a serious of code migrations/codemods which update your workspace to the latest and greatest best practices for workspace configuration.
+When you run the new command `lerna repair`, lerna will execute a series of code migrations/codemods which update your workspace to the latest and greatest best practices for workspace configuration.
 
 The actual codemods which run will be added to over time, but for now one you might see run on your workspace is that it will remove any explicit `"useNx": true` references from lerna.json files, because that is no longer necessary and it's cleaner not to have it.
 

@@ -1,16 +1,13 @@
 import {
   ClockIcon,
   CogIcon,
-  CollectionIcon,
   CubeTransparentIcon,
-  EmojiHappyIcon,
-  GlobeIcon,
-  LightningBoltIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
   ShareIcon,
   SparklesIcon,
-  TemplateIcon,
   UsersIcon,
-} from "@heroicons/react/outline";
+} from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import React from "react";
 import styles from "./about-lerna.module.css";
@@ -25,15 +22,13 @@ interface Callout {
 const callouts: Callout[] = [
   {
     title: "Never Rebuilds Same Code Twice",
-    text:
-      "Lerna won't run the tasks it executed before, and instead will restore the files and the terminal output from its cache.",
+    text: "Lerna won't run the tasks it executed before, and instead will restore the files and the terminal output from its cache.",
     link: "/docs/features/cache-tasks",
     icon: CogIcon,
   },
   {
     title: "Distributed Cache",
-    text:
-      "Computation cache can be shared between developers or CI/CD machines, drastically reducing average CI times.",
+    text: "Computation cache can be shared between developers or CI/CD machines, drastically reducing average CI times.",
     link: "/docs/features/cache-tasks#distributed-computation-caching",
     icon: ShareIcon,
   },
@@ -41,12 +36,11 @@ const callouts: Callout[] = [
     title: "Target Dependencies",
     text: "Lerna lets you specify how different targets (npm scripts) depend on each other.",
     link: "/docs/features/run-tasks#target-dependencies-aka-task-pipelines",
-    icon: CollectionIcon,
+    icon: RectangleStackIcon,
   },
   {
     title: "Efficient Execution",
-    text:
-      "Lerna runs any command in the most efficient way with the max degree of parallelization while respecting the execution order.",
+    text: "Lerna runs any command in the most efficient way with the max degree of parallelization while respecting the execution order.",
     link: "/docs/features/run-tasks",
     icon: ClockIcon,
   },
@@ -58,8 +52,7 @@ const callouts: Callout[] = [
   },
   {
     title: "Powerful Graph Visualizer",
-    text:
-      "Lerna comes with a powerful interactive workspace visualizer, helping you understand the architecture of your workspace.",
+    text: "Lerna comes with a powerful interactive workspace visualizer, helping you understand the architecture of your workspace.",
     link: "/docs/getting-started#visualizing-workspace",
     icon: (props) => (
       <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="currentColor" viewBox="0 0 16 16">
@@ -75,24 +68,21 @@ const callouts: Callout[] = [
   },
   {
     title: "Polished DX",
-    text:
-      "Lerna has a powerful dynamic CLI, making sure you only see what is relevant when you run commands against many projects.",
+    text: "Lerna has a powerful dynamic CLI, making sure you only see what is relevant when you run commands against many projects.",
     link: "/docs/getting-started",
     icon: UsersIcon,
   },
   {
     title: "Minimal",
-    text:
-      "Lerna requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.",
+    text: "Lerna requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.",
     link: "/docs/getting-started",
     icon: CubeTransparentIcon,
   },
   {
     title: "Lerna Does it All",
-    text:
-      "Why have separate tools for running tasks, linking packages and publishing them? Lerna does it--less config, less overhead.",
+    text: "Why have separate tools for running tasks, linking packages and publishing them? Lerna does it--less config, less overhead.",
     link: "/docs/getting-started",
-    icon: TemplateIcon,
+    icon: RectangleGroupIcon,
   },
 ];
 

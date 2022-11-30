@@ -240,6 +240,7 @@ class PublishCommand extends Command {
     }
 
     chain = chain.then(() => this.resolveLocalDependencyLinks());
+    chain = chain.then(() => this.resolveWorkspaceDependencyLinks());
     chain = chain.then(() => this.annotateGitHead());
     chain = chain.then(() => this.serializeChanges());
     chain = chain.then(() => this.packUpdated());
@@ -373,14 +374,16 @@ class PublishCommand extends Command {
       }).filter((node) => !node.pkg.private)
     );
 
-    const makeVersion = (fallback) => ({ lastVersion = fallback, refCount, sha }) => {
-      // the next version is bumped without concern for preid or current index
-      const nextVersion = semver.inc(lastVersion.replace(this.tagPrefix, ""), release.replace("pre", ""));
+    const makeVersion =
+      (fallback) =>
+      ({ lastVersion = fallback, refCount, sha }) => {
+        // the next version is bumped without concern for preid or current index
+        const nextVersion = semver.inc(lastVersion.replace(this.tagPrefix, ""), release.replace("pre", ""));
 
-      // semver.inc() starts a new prerelease at .0, git describe starts at .1
-      // and build metadata is always ignored when comparing dependency ranges
-      return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
-    };
+        // semver.inc() starts a new prerelease at .0, git describe starts at .1
+        // and build metadata is always ignored when comparing dependency ranges
+        return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
+      };
 
     if (this.project.isIndependent()) {
       // each package is described against its tags only
@@ -545,6 +548,36 @@ class PublishCommand extends Command {
 
         // it no longer matters if we mutate the shared Package instance
         node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+      }
+
+      // writing changes to disk handled in serializeChanges()
+    });
+  }
+
+  resolveWorkspaceDependencyLinks() {
+    // resolve relative workspace: links to their actual version range
+    const updatesWithWorkspaceLinks = this.updates.filter((node) =>
+      Array.from(node.localDependencies.values()).some((resolved) => !!resolved.workspaceSpec)
+    );
+
+    return pMap(updatesWithWorkspaceLinks, (node) => {
+      for (const [depName, resolved] of node.localDependencies) {
+        // only update local dependencies with workspace: links
+        if (resolved.workspaceSpec) {
+          let depVersion;
+          let savePrefix;
+          if (resolved.workspaceAlias) {
+            depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+            savePrefix = resolved.workspaceAlias === "*" ? "" : resolved.workspaceAlias;
+          } else {
+            const specMatch = resolved.workspaceSpec.match(/^workspace:([~^]?)(.*)/);
+            savePrefix = specMatch[1];
+            depVersion = specMatch[2];
+          }
+
+          // it no longer matters if we mutate the shared Package instance
+          node.pkg.updateLocalDependency(resolved, depVersion, savePrefix, { retainWorkspacePrefix: false });
+        }
       }
 
       // writing changes to disk handled in serializeChanges()

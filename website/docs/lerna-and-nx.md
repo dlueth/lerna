@@ -14,9 +14,8 @@ The following is a high level overview of what each tool provides. Note that all
 
 ### Features
 
-1. [Bootstrap](./features/bootstrap) - Link packages together in the same repo so they can be imported as if they were installed from NPM.
-2. [Version](./features/version-and-publish) - Automatically increment versions of packages
-3. [Publish](./features/version-and-publish) - Automatically create tags and publish packages
+1. [Version](./features/version-and-publish) - Automatically increment versions of packages, generate changelog information, create Github releases etc.
+2. [Publish](./features/version-and-publish) - Automatically create tags and publish packages to package registries, such as npm
 
 ### Cost
 
@@ -37,7 +36,7 @@ Free and open source
 2. [Run prerequisite tasks first](./features/run-tasks)
 3. [Cache task results locally](./features/cache-tasks)
 4. [Visualize the project graph](./features/project-graph)
-5. [Nx Console](./features/project-graph) - Visual Studio Code plugin
+5. [Nx Console](./features/editor-integrations#nx-console-for-vscode) - Visual Studio Code plugin
 
 ### Cost
 
@@ -49,7 +48,7 @@ Free and open source
 - Continue using Lerna as usual
 
 :::note
-When Lerna is set to use Nx and detects `nx.json` with `targetDefaults` in the workspace, it will defer to Nx to detect task dependencies. Some options for `lerna run` will behave differently than older versions of Lerna. See [Using Lerna (Powered by Nx) to Run Tasks](docs/lerna6-obsolete-options.md) for more details.
+When Lerna is running tasks with Nx and detects Nx target configuration, it will defer to Nx to detect task dependencies. Some options for `lerna run` will behave differently than older versions of Lerna. See [Using Lerna (Powered by Nx) to Run Tasks](docs/lerna6-obsolete-options.md) for more details.
 :::
 
 ---
