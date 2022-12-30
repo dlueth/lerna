@@ -59,6 +59,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--create-release <type>`](#--create-release-type)
     - [`--exact`](#--exact)
     - [`--force-publish`](#--force-publish)
+    - [`--git-tag-command <cmd>`](#--git-tag-command-cmd)
     - [`--git-remote <name>`](#--git-remote-name)
     - [`--ignore-changes`](#--ignore-changes)
     - [`--ignore-scripts`](#--ignore-scripts)
@@ -70,7 +71,9 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--no-granular-pathspec`](#--no-granular-pathspec)
     - [`--no-private`](#--no-private)
     - [`--no-push`](#--no-push)
+    - [`--npm-client-args`](#--npm-client-args)
     - [`--preid`](#--preid)
+    - [`--signoff-git-commit`](#--signoff-git-commit)
     - [`--sign-git-commit`](#--sign-git-commit)
     - [`--sign-git-tag`](#--sign-git-tag)
     - [`--force-git-tag`](#--force-git-tag)
@@ -212,8 +215,8 @@ When run with this flag, `lerna version` will release with bumped prerelease ver
 
 ```sh
 Changes:
- - major: 1.0.0-alpha.0 => 2.0.0-alpha.0 
- - minor: 1.0.0-alpha.0 => 1.1.0-alpha.0 
+ - major: 1.0.0-alpha.0 => 2.0.0-alpha.0
+ - minor: 1.0.0-alpha.0 => 1.1.0-alpha.0
  - patch: 1.0.0-alpha.0 => 1.0.1-alpha.0
 ```
 
@@ -261,6 +264,26 @@ lerna version --force-publish
 When run with this flag, `lerna version` will force publish the specified packages (comma-separated) or all packages using `*`.
 
 > This will skip the `lerna changed` check for changed packages and forces a package that didn't have a `git diff` change to be updated.
+
+### `--git-tag-command <cmd>`
+
+Allows users to specify a custom command to be used when applying git tags. For example, this may be useful for providing a wrapper command in CI/CD pipelines that have no direct write access.
+
+```sh
+lerna version --git-tag-command "git gh-tag %s -m %s"
+```
+
+This can also be configured in `lerna.json`.
+
+```json
+{
+  "command": {
+    "version": {
+      "gitTagCommand": "git gh-tag %s -m %s"
+    }
+  }
+}
+```
 
 ### `--git-remote <name>`
 
@@ -397,6 +420,42 @@ Note that this option does _not_ exclude [private scoped packages](https://docs.
 By default, `lerna version` will push the committed and tagged changes to the configured [git remote](#--git-remote-name).
 Pass `--no-push` to disable this behavior.
 
+### `--npm-client-args`
+
+This option allows arguments to be passed to the `npm install` that `lerna version` performs to update the lockfile.
+
+For example:
+
+```sh
+lerna version 3.3.3 --npm-client-args=--legacy-peer-deps
+
+lerna version 3.3.3 --npm-client-args="--legacy-peer-deps,--force"
+
+lerna version 3.3.3 --npm-client-args="--legacy-peer-deps --force"
+```
+
+This can also be set in `lerna.json`:
+
+```json
+{
+  ...
+  "npmClientArgs": ["--legacy-peer-deps", "--production"]
+}
+```
+
+or specifically for the version command:
+
+```json
+{
+  ...
+  "command": {
+    "version": {
+      "npmClientArgs": ["--legacy-peer-deps", "--production"]
+    }
+  }
+}
+```
+
 ### `--preid`
 
 ```sh
@@ -411,6 +470,12 @@ lerna version prepatch --preid next
 
 When run with this flag, `lerna version` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
 bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
+
+### `--signoff-git-commit`
+
+Adds the `--signoff` flag to the git commit done by lerna version when executed.
+
+> Note: This is different from `--sign-git-commit` which is about gpg signatures.
 
 ### `--sign-git-commit`
 

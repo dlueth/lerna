@@ -154,6 +154,10 @@ exports.builder = (yargs, composed) => {
       describe: "Pass the `--gpg-sign` flag to `git commit`.",
       type: "boolean",
     },
+    "signoff-git-commit": {
+      describe: "Pass the `--signoff` flag to `git commit`.",
+      type: "boolean",
+    },
     "sign-git-tag": {
       describe: "Pass the `--sign` flag to `git tag`.",
       type: "boolean",
@@ -167,6 +171,15 @@ exports.builder = (yargs, composed) => {
       type: "string",
       requiresArg: true,
       defaultDescription: "v",
+    },
+    "git-tag-command": {
+      describe:
+        "Allows users to specify a custom command to be used when applying git tags. For example, this may be useful for providing a wrapper command in CI/CD pipelines that have no direct write access.",
+      type: "string",
+    },
+    "npm-client-args": {
+      describe: "Additional arguments to pass to the npm client when performing 'npm install'.",
+      type: "array",
     },
     y: {
       describe: "Skip all confirmation prompts.",

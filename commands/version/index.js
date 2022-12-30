@@ -68,6 +68,7 @@ class VersionCommand extends Command {
       granularPathspec = true,
       push = true,
       signGitCommit,
+      signoffGitCommit,
       signGitTag,
       forceGitTag,
       tagVersionPrefix = "v",
@@ -96,6 +97,7 @@ class VersionCommand extends Command {
       commitHooks,
       granularPathspec,
       signGitCommit,
+      signoffGitCommit,
       signGitTag,
       forceGitTag,
     };
@@ -614,11 +616,14 @@ class VersionCommand extends Command {
       );
     }
 
+    const npmClientArgsRaw = this.options.npmClientArgs || [];
+    const npmClientArgs = npmClientArgsRaw.reduce((args, arg) => args.concat(arg.split(/\s|,/)), []);
+
     if (this.options.npmClient === "pnpm") {
       chain = chain.then(() => {
         this.logger.verbose("version", "Updating root pnpm-lock.yaml");
         return childProcess
-          .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts"], this.execOpts)
+          .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts", ...npmClientArgs], this.execOpts)
           .then(() => {
             const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
             changedFiles.add(lockfilePath);
@@ -632,7 +637,11 @@ class VersionCommand extends Command {
         chain = chain.then(() => {
           this.logger.verbose("version", "Updating root package-lock.json");
           return childProcess
-            .exec("npm", ["install", "--package-lock-only", "--ignore-scripts"], this.execOpts)
+            .exec(
+              "npm",
+              ["install", "--package-lock-only", "--ignore-scripts", ...npmClientArgs],
+              this.execOpts
+            )
             .then(() => {
               changedFiles.add(lockfilePath);
             });
@@ -685,7 +694,9 @@ class VersionCommand extends Command {
 
     return Promise.resolve()
       .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => Promise.all(tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts))))
+      .then(() =>
+        Promise.all(tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand)))
+      )
       .then(() => tags);
   }
 
@@ -698,7 +709,7 @@ class VersionCommand extends Command {
 
     return Promise.resolve()
       .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => gitTag(tag, this.gitOpts, this.execOpts))
+      .then(() => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
       .then(() => [tag]);
   }
 

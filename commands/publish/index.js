@@ -1,6 +1,7 @@
 "use strict";
 
 const os = require("os");
+const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const pMap = require("p-map");
@@ -256,10 +257,31 @@ class PublishCommand extends Command {
 
     return chain.then(() => {
       const count = this.packagesToPublish.length;
-      const message = this.packagesToPublish.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
 
       output("Successfully published:");
-      output(message.join(os.EOL));
+
+      if (this.options.summaryFile !== undefined) {
+        // create a json object and output it to a file location.
+        const filePath = this.options.summaryFile
+          ? `${this.options.summaryFile}/lerna-publish-summary.json`
+          : "./lerna-publish-summary.json";
+        const jsonObject = this.packagesToPublish.map((pkg) => {
+          return {
+            packageName: pkg.name,
+            version: pkg.version,
+          };
+        });
+        output(jsonObject);
+        try {
+          fs.writeFileSync(filePath, JSON.stringify(jsonObject));
+          output("Publish summary created: ", filePath);
+        } catch (error) {
+          output("Failed to create the summary report", error);
+        }
+      } else {
+        const message = this.packagesToPublish.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
+        output(message.join(os.EOL));
+      }
 
       this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
     });
@@ -275,7 +297,19 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     // attempting to publish a tagged release with local changes is not allowed
-    chain = chain.then(() => this.verifyWorkingTreeClean());
+    chain = chain
+      .then(() => this.verifyWorkingTreeClean())
+      .catch((err) => {
+        // an execa error is thrown when git suffers a fatal error (such as no git repository present)
+        if (err.failed && /git describe/.test(err.command)) {
+          // (we tried)
+          this.logger.silly("EWORKINGTREE", err.message);
+          this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
+        } else {
+          // validation errors should be preserved
+          throw err;
+        }
+      });
 
     chain = chain.then(() => getCurrentTags(this.execOpts, matchingPattern));
     chain = chain.then((taggedPackageNames) => {
@@ -360,7 +394,19 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     // attempting to publish a canary release with local changes is not allowed
-    chain = chain.then(() => this.verifyWorkingTreeClean());
+    chain = chain
+      .then(() => this.verifyWorkingTreeClean())
+      .catch((err) => {
+        // an execa error is thrown when git suffers a fatal error (such as no git repository present)
+        if (err.failed && /git describe/.test(err.command)) {
+          // (we tried)
+          this.logger.silly("EWORKINGTREE", err.message);
+          this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
+        } else {
+          // validation errors should be preserved
+          throw err;
+        }
+      });
 
     // find changed packages since last release, if any
     chain = chain.then(() =>
