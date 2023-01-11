@@ -24,7 +24,7 @@ interface FixtureCreateOptions {
 
 type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
 
-const PNPM_STORE = "../.pnpm-store";
+const PNPM_STORE = "pnpm.store";
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
 
@@ -40,6 +40,7 @@ export class Fixture {
   private readonly fixtureRootPath = joinPathFragments(this.e2eRoot, this.name);
   private readonly fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
   private readonly fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
+  private readonly fixturePnpmStorePath = joinPathFragments(this.fixtureRootPath, PNPM_STORE);
 
   constructor(
     private readonly e2eRoot: string,
@@ -118,9 +119,9 @@ export class Fixture {
 
   private async setNpmRegistry(): Promise<void> {
     if (this.packageManager === "pnpm") {
-      await this.exec(`mkdir ${PNPM_STORE}`);
+      await this.exec(`mkdir ${this.fixturePnpmStorePath}`);
       await this.exec(
-        `echo "registry=${REGISTRY}\nstore-dir = ${PNPM_STORE}\nverify-store-integrity=false" > .npmrc`
+        `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
       );
     }
   }
@@ -160,6 +161,13 @@ export class Fixture {
    */
   async readWorkspaceFile(file: string): Promise<string> {
     return readFile(this.getWorkspacePath(file), "utf-8");
+  }
+
+  /**
+   * Check if a workspace file exists.
+   */
+  async workspaceFileExists(file: string): Promise<boolean> {
+    return existsSync(this.getWorkspacePath(file));
   }
 
   /**
@@ -263,6 +271,68 @@ export class Fixture {
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
+  }
+
+  async lernaWatch(inputArgs: string): Promise<(timeoutMs?: number) => Promise<RunCommandResult>> {
+    return new Promise((resolve, reject) => {
+      const command = `npx --offline --no -c 'lerna watch --verbose ${inputArgs}'`;
+
+      let stdout = "";
+      let stderr = "";
+      let combinedOutput = "";
+      let error: Error | null = null;
+
+      const createResult = (): RunCommandResult => ({
+        stdout: stripConsoleColors(stdout),
+        stderr: stripConsoleColors(stderr),
+        combinedOutput: stripConsoleColors(combinedOutput),
+      });
+
+      const childProcess = spawn(command, {
+        shell: true,
+        cwd: this.fixtureWorkspacePath,
+        env: {
+          ...process.env,
+          FORCE_COLOR: "false",
+        },
+      });
+
+      childProcess.stdout.setEncoding("utf8");
+      childProcess.stdout.on("data", (chunk) => {
+        stdout += chunk;
+        combinedOutput += chunk;
+
+        if (chunk.toString().trim().includes("watch process waiting")) {
+          resolve(
+            (timeoutMs = 6000) =>
+              new Promise((resolve) => {
+                setTimeout(() => {
+                  childProcess.kill();
+                  resolve(createResult());
+                }, timeoutMs);
+              })
+          );
+        }
+      });
+
+      childProcess.stderr.setEncoding("utf8");
+      childProcess.stderr.on("data", (chunk) => {
+        stderr += chunk;
+        combinedOutput += chunk;
+      });
+
+      childProcess.on("error", (err) => {
+        error = err;
+      });
+
+      childProcess.on("close", () => {
+        if (error) {
+          reject(error);
+        } else if (stderr.includes("lerna ERR!")) {
+          reject(new Error(stderr));
+        }
+      });
+    });
   }
 
   async addNxJsonToWorkspace(): Promise<void> {
