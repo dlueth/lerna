@@ -32,8 +32,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "6.4.0",
-    "@lerna/describe-ref": "6.4.0",
+    "@lerna/child-process": "6.4.1",
+    "@lerna/describe-ref": "6.4.1",
     "minimatch": "^3.0.4",
     "npmlog": "^6.0.2",
     "read-pkg-up": "^7.0.1",
